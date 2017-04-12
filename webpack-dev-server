@@ -1,0 +1,6 @@
+Hash: cc0f9a75acd498c84298
+Version: webpack 2.3.3
+Time: 2532ms
+    Asset     Size  Chunks             Chunk Names
+bundle.js  2.66 kB       0  [emitted]  main
+   [0] ./app/js/index.js 13 bytes {0} [built]
