@@ -58,13 +58,15 @@ class Game extends React.Component {
 		});
 	}
 
-	jumpTo(move,squares) {
-		if (this.calculateWinner(squares) !== undefined) {
+	jumpTo(move,winner) {
+		if (winner !== null || this.state.isWinner) {
 			this.setState({
+				isWinner: true,
 				stepNumber: move,
 				xIsNext: (move % 2) ? false : true,
 			});
 		}
+					
 	}
 
 	render() {
@@ -90,7 +92,7 @@ class Game extends React.Component {
 			return (
 				<li>
 					<a href="#" key={index} 
-						onClick={() => this.jumpTo(index,history[history.length-1])}>
+						onClick={() => this.jumpTo(index,winner)}>
 						{desc}
 					</a>
 				</li>
