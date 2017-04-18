@@ -11,7 +11,8 @@ class Game extends React.Component {
 			isWinner: false,
 			history: [{
 				squares: Array(9).fill(null),
-			}],			
+			}],
+			movePlay: Array(1).fill('Start Game'),			
 			xIsNext: true,
 		};
 	}
@@ -38,12 +39,17 @@ class Game extends React.Component {
 	}
 
 	handleClick(i) {
+		let play;
 		let history = this.state.history;
-		let move = this.state.stepNumber !== undefined ?
+		let move = 
+			this.state.stepNumber !== undefined ?
 			this.state.stepNumber :
 			history.length-1;
+
 		let current = this.state.history[move];
 		const squares = current.squares.slice();
+		const movePlay = this.state.movePlay.slice();
+		
 
 		if (this.calculateWinner(squares) || squares[i]) {
 			return;
@@ -52,9 +58,18 @@ class Game extends React.Component {
 		squares[i] = this.state.xIsNext ? 'X' : 'O';
 		history = [...history,{squares: squares}];
 
+		play = 
+		i >= 0 && i < 3 ? '(1,' : 
+		i >= 3 && i < 6 ? '(2,' :
+		i >= 6 && i < 9 ? '(3,' : 'null';
+
+		play += (String(i+1) + ')');
+		movePlay.push(play);
+
 		this.setState({
 			history: history,
 			xIsNext: !this.state.xIsNext,
+			movePlay: movePlay,
 		});
 	}
 
@@ -71,11 +86,12 @@ class Game extends React.Component {
 
 	render() {
 		let history = this.state.history;
-		console.log('history',this.state.history,this.state.stepNumber);
-
-		let move = this.state.stepNumber !== undefined ?
+		let move = 
+			this.state.stepNumber !== undefined ?
 			this.state.stepNumber :
 			history.length-1;
+		let mov = this.state.movePlay;
+
 
 		let squares = history[move].squares;
 		const winner = this.calculateWinner(squares);
@@ -88,7 +104,11 @@ class Game extends React.Component {
 		}
 
 		const moves = history.map((element,index) => {
-			const desc = index ? 'Move #' + index : 'Start Game';
+			/*
+				asi lo tienen el tutorial
+				const desc = index ? 'Move #' + mov : 'Start Game';
+			*/
+			const desc = mov[index];
 			return (
 				<li>
 					<a href="#" key={index} 
