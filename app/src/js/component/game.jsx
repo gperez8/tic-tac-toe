@@ -14,6 +14,7 @@ class Game extends React.Component {
 			}],
 			movePlay: Array(1).fill('Start Game'),			
 			xIsNext: true,
+			sense: 'desc',
 		};
 	}
 
@@ -41,17 +42,18 @@ class Game extends React.Component {
 	handleClick(i) {
 		let play;
 		let history = this.state.history;
-		let move = 
-			this.state.stepNumber !== undefined ?
-			this.state.stepNumber :
-			history.length-1;
-
+		
+		let move = 	this.state.stepNumber !== undefined ? 
+					this.state.stepNumber : 
+					history.length-1;
+		
 		let current = this.state.history[move];
 		const squares = current.squares.slice();
 		const movePlay = this.state.movePlay.slice();
 		
-
-		if (this.calculateWinner(squares) || squares[i]) {
+		if (this.calculateWinner(squares) || 
+			this.state.isWinner ||
+			squares[i]) {
 			return;
 		}
 		
@@ -73,29 +75,41 @@ class Game extends React.Component {
 		});
 	}
 
-	jumpTo(move,winner) {
+	handleSense() {
+		
+		let move = this.state.movePlay;
+		move.reverse();
+
+		this.setState({
+			sense: this.state.sense === 'desc' ? 'asc' : 'desc',
+			movePlay: move,
+		});
+	}
+
+	jumpTo(move, winner) {		
 		if (winner !== null || this.state.isWinner) {
 			this.setState({
 				isWinner: true,
 				stepNumber: move,
 				xIsNext: (move % 2) ? false : true,
 			});
-		}
-					
+		}			
 	}
 
 	render() {
+		let sense = this.state.sense;
 		let history = this.state.history;
+		
 		let move = 
 			this.state.stepNumber !== undefined ?
 			this.state.stepNumber :
 			history.length-1;
+		
 		let mov = this.state.movePlay;
-
-
 		let squares = history[move].squares;
-		const winner = this.calculateWinner(squares);
 		let status = '';
+		const winner = this.calculateWinner(squares);
+		const isWinner = this.state.isWinner;
 
 		if (winner !== null) {
 			status = 'winner ' + (winner);
@@ -108,11 +122,32 @@ class Game extends React.Component {
 				asi lo tienen el tutorial
 				const desc = index ? 'Move #' + mov : 'Start Game';
 			*/
+			
+			let pos = index; 
+			
+			if (sense === 'asc') {
+				pos = (history.length-1) - pos;
+			}
+
 			const desc = mov[index];
+			
+			if (pos === move && isWinner){	
+				return (
+					<li>
+						<b>
+							<a href="#" key={pos} 
+								onClick={() => this.jumpTo(pos,winner)}>
+								{desc}
+							</a>
+						</b>
+					</li>
+				);
+			} 
+
 			return (
 				<li>
-					<a href="#" key={index} 
-						onClick={() => this.jumpTo(index,winner)}>
+					<a href="#" key={pos} 
+						onClick={() => this.jumpTo(pos,winner)}>
 						{desc}
 					</a>
 				</li>
@@ -127,7 +162,9 @@ class Game extends React.Component {
 							{status}
 						</h1>
 					</div>
-					<Board squares={squares} onClick={this.handleClick.bind(this)}/>
+					<Board 	squares={squares} 
+							onClick={this.handleClick.bind(this)} 
+							sense={this.handleSense.bind(this)}/>
 				</div>
 				<div className='game-info'>
 					<ol>{moves}</ol>
