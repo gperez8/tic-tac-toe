@@ -9,7 +9,24 @@ export default class Board extends React.Component {
 	}
 
 	renderSquare(i) {
-		return(<Square value={this.props.squares[i]} key={i} id={i} onClick={() => this.props.onClick(i)}/>);
+
+		const squareWin = this.props.winningRoute;
+		let isSquareWin = null;		
+
+		if (squareWin) {
+			isSquareWin = 
+			(i === squareWin[0] || 
+			i === squareWin[1] ||
+			i === squareWin[2]) ? true : null;
+		}
+
+		return( <Square
+					squareWin={isSquareWin} 
+					value={this.props.squares[i]} 
+					key={i} 
+					id={i} 
+					onClick={() => this.props.onClick(i)}
+			/>);
 	}
 
 	handleClick(e) {

@@ -33,7 +33,7 @@ class Game extends React.Component {
 		for (let i = 0; i < playWinner.length; i++) {
 			const [a, b, c] = playWinner[i];
 			if (squares[a] !== null && squares[a] === squares[b] && squares[a] === squares[c]) {
-				return squares[a];
+				return [a,b,c];
 			}
 		}
 		return null;
@@ -76,7 +76,6 @@ class Game extends React.Component {
 	}
 
 	handleSense() {
-		
 		let move = this.state.movePlay;
 		move.reverse();
 
@@ -108,11 +107,12 @@ class Game extends React.Component {
 		let mov = this.state.movePlay;
 		let squares = history[move].squares;
 		let status = '';
+
 		const winner = this.calculateWinner(squares);
 		const isWinner = this.state.isWinner;
 
 		if (winner !== null) {
-			status = 'winner ' + (winner);
+			status = 'winner ' + (squares[winner[0]]);
 		} else {
 			status = 'Next play: ' + (this.state.xIsNext ? 'X' : 'O');		
 		}
@@ -131,7 +131,7 @@ class Game extends React.Component {
 
 			const desc = mov[index];
 			
-			if (pos === move && isWinner){	
+			if (pos === move && isWinner) {	
 				return (
 					<li>
 						<b>
@@ -164,7 +164,8 @@ class Game extends React.Component {
 					</div>
 					<Board 	squares={squares} 
 							onClick={this.handleClick.bind(this)} 
-							sense={this.handleSense.bind(this)}/>
+							sense={this.handleSense.bind(this)}
+							winningRoute={winner}/>
 				</div>
 				<div className='game-info'>
 					<ol>{moves}</ol>
